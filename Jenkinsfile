@@ -16,9 +16,7 @@ pipeline {
 
         stage('Build Frontend Docker Image') {
             steps {
-                dir('frontend') {
-                    sh "docker build -t $FRONT_IMAGE ."
-                }
+                sh "docker build -t $FRONT_IMAGE ."
             }
         }
 
@@ -27,7 +25,7 @@ pipeline {
         stage('Deploy Containers') {
             steps {
                 sh "docker rm -f $FRONT_CONTAINER || true"
-                
+
                 sh "docker run -d -p ${FRONT_PORT}:80 --name $FRONT_CONTAINER $FRONT_IMAGE"
             }
         }

@@ -24,4 +24,5 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # 컨테이너 외부 노출 포트
 EXPOSE 80
 
+
 CMD ["nginx", "-g", "daemon off;"]

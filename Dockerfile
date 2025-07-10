@@ -14,7 +14,7 @@ RUN pnpm install
 
 # 나머지 소스 복사 후 빌드
 COPY . .
-RUN pnpm build
+RUN pnpm build && pnpm export
 
 # 2단계: 정적 파일을 Nginx로 서빙
 FROM nginx:stable-alpine

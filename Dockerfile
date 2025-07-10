@@ -4,32 +4,24 @@ FROM node:18-alpine AS builder
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# pnpm 설치
-RUN npm install -g pnpm
-
-# 의존성 설치
-COPY pnpm-lock.yaml ./
-COPY package.json ./
-RUN pnpm install
+# package.json 복사 및 의존성 설치
+COPY package*.json ./
+RUN npm install
 
 # 나머지 소스 복사 후 빌드
 COPY . .
-RUN pnpm build && pnpm export
+RUN npm run build
 
-# 2단계: 정적 파일을 Nginx로 서빙
+# 2단계: 정적 파일을 nginx로 서빙
 FROM nginx:stable-alpine
 
-# 빌드된 결과물 복사 (Vite나 CRA는 보통 dist 또는 build 폴더로 나옴)
-COPY --from=builder /app/dist /usr/share/nginx/html
+# 빌드된 결과물 복사
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# (선택) Nginx 설정 덮어쓰기
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# nginx 기본 설정 덮어쓰기 (선택)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# 외부 포트 노출
+# 컨테이너 외부 노출 포트
 EXPOSE 80
 
-
-
-# Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
-
